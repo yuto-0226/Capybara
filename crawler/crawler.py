@@ -1,5 +1,9 @@
 from crawler import *
 
+class PTTcrawler():
+    def __init__():
+        root = "https://www.ppt.cc"
+
 def main():
     url = "https://www.ptt.cc/bbs/TTU-talk/index.html"
     web = requests.get(url)                        # 取得網頁內容
