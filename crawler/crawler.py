@@ -4,7 +4,7 @@ root = "https://www.ptt.cc"
 
 # 回傳一個 url 字串
 # args: 版面, 關鍵字(list), 頁數
-def query(board: str, keywords: list, page: int) -> str:
+def query(board: str, keywords: list, page: int) -> str :
     url = root
     url += f"/bbs/{board}/"
     
@@ -23,13 +23,15 @@ def query(board: str, keywords: list, page: int) -> str:
     
     return url
 
-def get_web(url):
-    return requests.get(url)
+def url_to_soup(url):
+    web = requests.get(url)
+    soup = BeautifulSoup(web.text, "html.parser")
+    return soup
 
 # 回傳文章物件
-def get_posts(url: str) -> dict:
-    data = [{}]
-    web = get_web(url)
+def get_posts(url: str) -> dict :
+    data: dict = []
+    web = requests.get(url)
     soup = BeautifulSoup(web.text, "html.parser")
     
     for item in soup.find_all("div",class_="r-ent"):
@@ -43,6 +45,18 @@ def get_posts(url: str) -> dict:
         }
         data.insert(0,obj)
     return data
+
+def get_post_content(post: dict) -> dict :
+    url = post["link"]
+    web = requests.get(url)
+    soup = BeautifulSoup(web.text, "html.parser")
+    post_content = soup.find('div', class_="bbs-screen bbs-content")
+    content = post_content.get_text(strip=True)
+    obj = {
+        'content': content,
+        'comment': []
+    }
+    return obj
 
 def main():
     url = query("TTU-talk",["資工"],1)
