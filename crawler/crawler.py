@@ -23,12 +23,31 @@ def query(board: str, keywords: list, page: int) -> str:
     
     return url
 
+def get_web(url):
+    return requests.get(url)
+
+# 回傳文章物件
+def get_posts(url: str) -> dict:
+    data = [{}]
+    web = get_web(url)
+    soup = BeautifulSoup(web.text, "html.parser")
+    
+    for item in soup.find_all("div",class_="r-ent"):
+        title = item.find('div', class_='title').getText().strip()
+        link = root + item.find('div', class_='title').a['href'].strip()
+        author = item.find('div', class_='author').getText().strip()
+        obj = {
+            "title": title,
+            "link": link,
+            "author": author
+        }
+        data.insert(0,obj)
+    return data
+
 def main():
     url = query("TTU-talk",["資工"],1)
-    print(url)
-    web = requests.get(url)                        # 取得網頁內容
-    soup = BeautifulSoup(web.text, "html.parser")  # 轉換成標籤樹
-    print(soup)
+    articles = get_posts(url)
+    print(articles)
 
 # 若執行進入點為此檔案則執行以下
 if __name__ == "__main__":
