@@ -44,14 +44,16 @@ def get_posts(url: str) -> dict :
             "author": author
         }
         data.insert(0,obj)
+        get_post_content(obj)
     return data
 
 def get_post_content(post: dict) -> dict :
-    url = post["link"]
+    url = post.get("link")
     web = requests.get(url)
     soup = BeautifulSoup(web.text, "html.parser")
     post_content = soup.find('div', class_="bbs-screen bbs-content")
     content = post_content.get_text(strip=True)
+    print(content)
     obj = {
         'content': content,
         'comment': []
